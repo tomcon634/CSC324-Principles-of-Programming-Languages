@@ -1,0 +1,147 @@
+#lang racket #| CSC324 Fall 2018: Exercise 3 |#
+#|
+★ Before starting, please review the exercise guidelines at
+https://www.cs.toronto.edu/~david/csc324/homework.html ★
+|#
+;-------------------------------------------------------------------------------
+(provide build-env curry-2 fix-first curry-n)
+
+
+;-------------------------------------------------------------------------------
+; ★ Task 1: Building an environment ★
+;-------------------------------------------------------------------------------
+#|
+(build-env bindings)
+  bindings: a datum representing a sequence of name bindings.
+
+  Assume that `bindings` follows the grammar from the handout, and that all names
+  are defined before they are referenced in the list (so the input is always
+  semantically-valid), and no names are defined more than once.
+
+  Returns a hash table containing a map of symbols to integer values.
+  Don't use mutation!
+
+  Hash table reference: https://docs.racket-lang.org/reference/hashtables.html.
+
+  Implementation hint:
+    It may be very tempting to think about this iteratively ("loop through each
+    binding and add it to a hash table").
+    While we don't want you to use mutation, recall from lecture that this
+    basic loop accumulator pattern can be translated into a call to foldl.
+    In fact, it's possible to implement this function as just a single
+    call to foldl, with an appropriate helper function!
+|#
+(define (build-env bindings)
+  (void))
+
+
+(module+ test
+  (require rackunit)
+
+  (test-equal? "One binding"
+               (build-env (list '(define x 3)))
+               (hash 'x 3))
+  (test-equal? "Two bindings"
+               (build-env (list '(define x 4)
+                                '(define y x)))
+               (hash 'x 4
+                     'y 4)))
+
+
+;-------------------------------------------------------------------------------
+; ★ Task 2: Currying ★
+;-------------------------------------------------------------------------------
+; Racket provides a built-in function "curry" that does the first task for you.
+; You may NOT use this function in your code---submissions which do so will
+; receive a grade of ZERO on the whole exercise!
+(define (curry . rest) (error "curry: You may not use this function."))
+
+#|
+(curry-2 f)
+  f: a *binary* function
+
+  Returns a unary function g that takes an argument x, and returns a
+  new unary function h that takes an argument y, such that
+  (h y) is equivalent to (f x y).
+
+  Here is a simple Python-style doctest for curry-2.
+  We strongly recommend turning it into an exectuable test case,
+  using the "module+ test" approach you've previously seen.
+
+  > (define (add-2-mult x y) (* (+ 2 x) y))
+  > (define func (curry-2 add-2-mult))
+  > ((func 4) 5)
+  30
+|#
+(define (curry-2 f)
+  (void))
+
+
+(module+ test
+  (test-equal? "curry-2/Addition"
+               (let ([f (curry-2 (lambda (x y) (+ x y)))])
+                 ((f 3) 5))  ; (f 3) is a function call!
+               8))
+
+
+#|
+(define fix-first x f)
+  x: a positive integer
+  f: a function that takes at least 1 argument.
+
+  Returns a new function g that takes one fewer argument than f,
+  such that
+
+  (g x2 x3 ... xn) == (f x x2 x3 ... xn)
+
+  Hint: because the arity (number of arguments) of the returned function
+  depends on the input f, you can't use something like (lambda (y z) ...)
+  to define it. Instead, lookup *rest arguments* and *apply* to complete
+  the function.
+
+  Note: you don't need to do any "typechecking"---if the user passes the wrong
+  number of arguments to the returned function, calling f should raise an error.
+|#
+(define (fix-first x f)
+  (void))
+
+
+(module+ test
+  (test-equal? "fix-first/ternary"
+              (let ([f2 (fix-first 3
+                                   (lambda (x y z) (+ x (* y z))))])
+                (f2 5 8))
+              ; We've deliberately left the body unexpanded to show what's going on.
+              (+ 3 (* 5 8))))
+
+
+#|
+(curry-n n f)
+  n: a positive integer
+  f: a function that takes n arguments
+
+  A generalization of curry-2, except now f takes n arguments;
+  curry-n returns a function g that is the curried version of f.
+
+  Notes and hints:
+    1. It is possible to define curry-2 in terms of curry-n
+       (but doing curry-2 yourself first is easier).
+    2. Review the handout's examples of currying to determine the correct
+       *recursive structure* for this function.
+    3. If g = (curry-n n f), how is (g x) related to (fix-first x f)?
+|#
+(define (curry-n n f)
+  (void))
+
+
+(module+ test
+  ; NOTE: don't uncomment the test below until you've written
+  ; your own test for a good *base case* for curry-n!
+  ; (Until you're confident in your base case, you likely won't
+  ; have much luck with a correct recursive case.)
+
+  #;(test-equal? "curry-n/ternary"
+               (let ([f3 (curry-n 3
+                                  (lambda (x y z) (+ x (* y z))))])
+                 (((f3 3) 5) 8))
+               (+ 3 (* 5 8))))
